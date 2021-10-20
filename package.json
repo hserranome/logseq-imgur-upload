@@ -1,0 +1,41 @@
+{
+  "name": "logseq-plugin-template-react",
+  "version": "1.0.0",
+  "main": "dist/index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@logseq/libs": "^0.0.1-alpha.29",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-use": "^17.3.1"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "6.0.0",
+    "@semantic-release/exec": "6.0.1",
+    "@semantic-release/git": "10.0.0",
+    "@semantic-release/npm": "8.0.2",
+    "@types/node": "16.7.13",
+    "@types/react": "17.0.30",
+    "@types/react-dom": "17.0.10",
+    "@typescript-eslint/eslint-plugin": "5.1.0",
+    "@typescript-eslint/parser": "5.1.0",
+    "@vitejs/plugin-react": "1.0.5",
+    "conventional-changelog-conventionalcommits": "4.6.1",
+    "eslint": "8.0.1",
+    "eslint-plugin-react": "7.26.1",
+    "semantic-release": "18.0.0",
+    "typescript": "4.4.4",
+    "vite": "2.6.10",
+    "vite-plugin-windicss": "1.4.12",
+    "windicss": "3.1.9"
+  },
+  "logseq": {
+    "id": "_pengx17-logseq-template-react",
+    "icon": "./logo.svg"
+  }
+}
