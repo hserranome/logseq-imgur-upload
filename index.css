@@ -1,0 +1,61 @@
+:root {
+	--background-color: #3c424b;
+	--button-color: #272a33;
+	--text-color: #f2f2f2;
+	--accent-color: #1bb76e;
+}
+
+.imgur-upload-wrapper {
+	position: absolute;
+	z-index: 1;
+	background-color: var(--background-color);
+	border: 1px solid var(--border-color);
+	color: var(--text-color);
+	border-radius: 6px;
+	box-shadow: 0 5px 15px 0 rgb(0 0 0 / 50%);
+}
+
+.imgur-upload-form {
+	display: flex;
+	padding: 10px;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.imgur-upload-input {
+	border: 3px dashed hsla(0, 0%, 100%, 0.4);
+	border-radius: 6px;
+	padding: 20px;
+}
+.imgur-upload-input::before {
+	content: "Click to select or drop file here";
+	display: block;
+	text-align: center;
+	color: var(--text-color);
+	font-size: 1.2em;
+	font-weight: bold;
+	padding: 10px;
+}
+
+.imgur-upload-button {
+	text-align: center;
+	margin-top: 10px;
+	height: 35px;
+	padding: 7px 14px 10px 9px;
+	border-radius: 6px;
+	font-size: 15px;
+	font-weight: 700;
+	position: relative;
+	width: auto;
+	background-color: var(--accent-color);
+	box-shadow: 0 6px 10px 0 rgb(27 28 30 / 31%);
+	color: var(--text-color);
+	white-space: nowrap;
+	border: none;
+}
+
+.imgur-upload-button-disabled {
+	background-color: hsla(0, 0%, 100%, 0.4);
+	color: hsla(0, 0%, 100%, 0.4);
+	cursor: not-allowed;
+}
