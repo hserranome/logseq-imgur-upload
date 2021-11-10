@@ -1,5 +1,7 @@
 # Imgur Upload for Logseq
 
+![cover](./cover.png)
+
 Adds `/imgur` command to Logseq which opens up a form to upload and insert the image from Imgur. This allows for easy sharing of files without having to upload the images elsewhere. Also good for saving space on your local storage.
 
 ![demo](./demo.gif)
