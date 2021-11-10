@@ -1,12 +1,12 @@
 # Imgur Upload for Logseq
 
-Adds `/imgur` command to Logseq which opens up a form to upload and insert the image from Imgur.
+Adds `/imgur` command to Logseq which opens up a form to upload and insert the image from Imgur. This allows for easy sharing of files without having to upload the images elsewhere. Also good for saving space on your local storage.
 
 ![demo](./demo.gif)
 
 ## Installation
 
-For now see development below.
+This plugin is available for Logseq from the marketplace.
 
 ## Development
 
