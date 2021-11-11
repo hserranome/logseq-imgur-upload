@@ -1,4 +1,4 @@
-name: Build plugin
+name: Build and release plugin
 
 on:
   push:
@@ -8,6 +8,15 @@ on:
 
 env:
   PLUGIN_NAME: logseq-imgur-upload
+
+
+# Controls when the action will run.
+on:
+  push:
+    branches:
+      - "master"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
