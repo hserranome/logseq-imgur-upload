@@ -72,7 +72,8 @@ async function main() {
 				if (result.ok) {
 					const json = await result.json();
 					const imgUrl = json.data.link;
-					insertResult(imgUrl);
+					const block =await logseq.Editor.getCurrentBlock()
+					insertResult(imgUrl, block.format);
 				}
 			} catch (err) {
 				console.log(err);
@@ -82,8 +83,12 @@ async function main() {
 			submitButton.classList.remove("imgur-upload-button-disabled");
 		}
 
-		const insertResult = (imgUrl) => {
-			logseq.Editor.insertAtEditingCursor(`![${imgUrl}](${imgUrl})`);
+		const insertResult = (imgUrl, format) => {
+			if(format === "org"){
+				logseq.Editor.insertAtEditingCursor(`[[${imgUrl}][${imgUrl}]]`);
+			}else {
+				logseq.Editor.insertAtEditingCursor(`![${imgUrl}](${imgUrl})`);
+			}
 			logseq.Editor.exitEditingMode();
 			logseq.hideMainUI();
 			(<HTMLInputElement>document.querySelector("#imgur-upload-input")).value = "";
