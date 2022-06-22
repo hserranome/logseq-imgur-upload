@@ -16,23 +16,65 @@ const createDomElements = (container) => {
 	const form = document.createElement("form");
 	form.classList.add("imgur-upload-form");
 	form.innerHTML = `
-				<input class="imgur-upload-input" name="image" type="file" id="imgur-upload-input" placeholder="Upload to Imgur" />
-				<button class="imgur-upload-button" id="imgur-upload-button" type="submit">Upload</button>
-			`;
+		<input class="imgur-upload-input" name="image" type="file" id="imgur-upload-input" />
+		<button class="imgur-upload-button" id="imgur-upload-button" type="submit">Upload</button>
+		<div class="imgur-upload-message" id="imgur-upload-message"></div>
+	`;
 	container.appendChild(form);
 };
 
-const handleEscPress = (e) => {
-	if (e.key === "Escape") {
+const handleClose = (e) => {
+	if (
+		(e.type === "keydown" && e.key === "Escape") ||
+		(e.type === "click" && !(e.target as HTMLElement).closest(".imgur-upload-wrapper"))
+	) {
 		logseq.hideMainUI({ restoreEditingCursor: true });
 	}
 	e.stopPropagation();
 };
 
-const handleClickOutside = (e) => {
-	if (!(e.target as HTMLElement).closest(".imgur-upload-wrapper")) {
-		logseq.hideMainUI({ restoreEditingCursor: true });
+const insertResultInCurrentBlock = async (imgUrl) => {
+	const block = await logseq.Editor.getCurrentBlock();
+	if (block.format === "org") {
+		logseq.Editor.insertAtEditingCursor(`[[${imgUrl}][${imgUrl}]]`);
+	} else {
+		logseq.Editor.insertAtEditingCursor(`![${imgUrl}](${imgUrl})`);
 	}
+	logseq.Editor.exitEditingMode();
+	logseq.hideMainUI();
+	(<HTMLInputElement>document.querySelector("#imgur-upload-input")).value = "";
+};
+
+async function postData(formdata, button) {
+	try {
+		button.disabled = true;
+		button.innerText = "Uploading...";
+		button.classList.add("imgur-upload-button-disabled");
+		const result = await uploadToImgur(formdata);
+		if (result.ok) {
+			const json = await result.json();
+			const imgUrl = json.data.link;
+
+			await insertResultInCurrentBlock(imgUrl);
+		}
+	} catch (err) {
+		console.log(err);
+	}
+	button.disabled = false;
+	button.innerText = "Upload";
+	button.classList.remove("imgur-upload-button-disabled");
+}
+
+const checkFileIsValid = (file) => {
+	if (!file.type || !file.type.match(/image.*/)) return "File is not an image";
+	if (file.size > 20 * 1024 * 1024) return "File is too large"; // 20MB
+	return true;
+};
+
+const generateFormData = (file) => {
+	const formData = new FormData();
+	formData.append("image", file);
+	return formData;
 };
 
 async function main() {
@@ -49,59 +91,40 @@ async function main() {
 		const form = document.querySelector(".imgur-upload-form");
 		const fileInput = document.querySelector("#imgur-upload-input");
 		const submitButton = <HTMLInputElement>document.querySelector("#imgur-upload-button");
+		const message = <HTMLInputElement>document.querySelector("#imgur-upload-message");
 
-		document.addEventListener("keydown", handleEscPress, false);
-		document.addEventListener("click", handleClickOutside);
+		document.addEventListener("keydown", handleClose, false);
+		document.addEventListener("click", handleClose);
 
-		// Handle submit event
+		const handleUpload = async (files) => {
+			if (files.length === 0) return;
+			message.innerText = "";
+			// We only support one file at a time
+			const file = files[0];
+			const error = checkFileIsValid(file);
+			if (typeof error === "string") {
+				message.innerText = error;
+				return;
+			}
+			const formData = generateFormData(file);
+			await postData(formData, submitButton);
+		};
+
 		form.addEventListener("submit", (event: Event) => {
 			event.preventDefault();
-			// Get file into formdata and upload to Imgur
-			const imageFile = (<HTMLInputElement>fileInput).files[0];
-			const formData = new FormData();
-			formData.append("image", imageFile);
-			postData(formData);
+			handleUpload((<HTMLInputElement>fileInput).files);
 		});
 
-		async function postData(formdata) {
-			try {
-				submitButton.disabled = true;
-				submitButton.innerText = "Uploading...";
-				submitButton.classList.add("imgur-upload-button-disabled");
-				const result = await uploadToImgur(formdata);
-				if (result.ok) {
-					const json = await result.json();
-					const imgUrl = json.data.link;
-					const block =await logseq.Editor.getCurrentBlock()
-					insertResult(imgUrl, block.format);
-				}
-			} catch (err) {
-				console.log(err);
-			}
-			submitButton.disabled = false;
-			submitButton.innerText = "Upload";
-			submitButton.classList.remove("imgur-upload-button-disabled");
-		}
-
-		const insertResult = (imgUrl, format) => {
-			if(format === "org"){
-				logseq.Editor.insertAtEditingCursor(`[[${imgUrl}][${imgUrl}]]`);
-			}else {
-				logseq.Editor.insertAtEditingCursor(`![${imgUrl}](${imgUrl})`);
-			}
-			logseq.Editor.exitEditingMode();
-			logseq.hideMainUI();
-			(<HTMLInputElement>document.querySelector("#imgur-upload-input")).value = "";
+		document.onpaste = (event) => {
+			const clipboardData = event.clipboardData || (window as any).clipboardData;
+			handleUpload(clipboardData.files);
 		};
 	};
 
 	// Register the slash command
 	logseq.Editor.registerSlashCommand("Imgur", async () => {
 		const { left, top, rect } = await logseq.Editor.getEditingCursorPosition();
-		Object.assign(container.style, {
-			top: top + rect.top + "px",
-			left: left + rect.left + "px",
-		});
+		Object.assign(container.style, { top: top + rect.top + "px", left: left + rect.left + "px" });
 		logseq.showMainUI();
 		setTimeout(() => initImgurUpload(), 100);
 	});
