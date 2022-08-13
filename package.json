@@ -1,6 +1,6 @@
 {
 	"name": "logseq-imgur-upload",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A Logseq plugin to upload and add images to Imgur via slash commands 🖼",
 	"main": "dist/index.html",
 	"author": "@hserranome",
