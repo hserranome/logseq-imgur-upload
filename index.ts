@@ -5,7 +5,7 @@ const uploadToImgur = async (formData) => {
 	return fetch("https://api.imgur.com/3/image", {
 		method: "POST",
 		headers: new Headers({
-			Authorization: "Client-ID f3ce1ca4ab789d4",
+			Authorization: "Client-ID c803cb9700a03b9",
 		}),
 		body: formData,
 	});
